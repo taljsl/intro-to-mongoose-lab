@@ -26,8 +26,20 @@ const connect = async () => {
 
 const runQueries = async () => {
     console.log('Queries running.')
-    if (userChoice === '1') {
-        createProfile();
+    switch(userChoice){
+    case '1':
+        await createProfile();
+        break;
+    case '2':
+        await findAllProfiles();
+        break;
+    case '3':
+        await updateProfile();
+        break;
+    case '4':
+        
+
+
     }
     // The functions calls to run queries in our db will go here as we write them.
   };
@@ -45,7 +57,39 @@ const createProfile = async () => {
 }
 
 const findAllProfiles = async () => {
-    
+    const profiles = await (Profiles.find({}));
+    console.log("All Profiles: ", profiles)
+}
+
+const updateProfile = async () => {
+    const targetProfile = prompt("What is the name of the person who's profile you wish to update? : ")
+    const findProfile = await Profiles.findOne({name: targetProfile})
+
+    if(!findProfile){
+        console.log('Profile Not Found')
+        return;
+    }
+
+    console.log("Okay, here is that profile: ", findProfile)
+    const whatToChange = prompt('What would you like to change? \n 1) Name \n 2) Age')
+    const updateInformation =  () => {
+        if (whatToChange == "1") {
+            let newName = prompt('Please insert the new name for this user: ')
+            findProfile.name = newName;
+            await findProfile.save()
+            console.log(`Okay, I've updated that ifnromation for you`, findProfile)
+        } else if (whatToChange == "2"){
+            let newAge = prompt ('How old are they now?: ')
+            findProfile.age = newAge
+            await findProfile.save()
+            console.log(`Okay, I've updated that ifnromation for you`, findProfile)
+        } else {
+            console.log('Invalid input, please try again')
+            updateInformation();
+        }
+    }
+
+
 }
 
 connect()
